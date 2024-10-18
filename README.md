@@ -1,5 +1,5 @@
 # SIGMOD25 PIMGT
-Supplementary materials for VLDB'24 submission: PimGT
+Supplementary materials for SIGMOD25 submission: PimGT
 
 ## Half-Division (HDV)
 
@@ -16,42 +16,58 @@ We provide an object file and some source code files written by C.
 You can generate the executable files with "HDV/Makefile".
 ```
 ~/SIGMOD25_PIMGT$ cd HDV
-~/SIGMOD25_PIMGT/HDV$ make	// generates all executables
-~/SIGMOD25_PIMGT/HDV$ make ne	// for Edge-cut Version of Neighbor Expansion
-~/SIGMOD25_PIMGT/HDV$ make divide	// for Half-Division
-~/SIGMOD25_PIMGT/HDV$ make debug	// for debugging the partitioning qualities
+~/SIGMOD25_PIMGT/HDV$ make	    // generates all executables
+~/SIGMOD25_PIMGT/HDV$ make base	// generates all baselines
 ```
 
 ### Baseline
-We used METIS 5.1.0 [1], Neighbor Expansion [2], Half-Division, Half-Division with ICN refinement, and Half-Division with ICN refinement + Balancing for baselines.
-Every baseline source codes are also provided.
+We used 10 baselines for the experiments.
+- METIS 5.1.0 [1]
+- BPart [2]
+- Fennel [3]
+- NE [4]
+- TopoX [5]
+- HEP [6]
+- FSM [7]
+- HDV
+- HDV with ICN adjustment
+- Pimgt (HDV with ICN adjustment and ICN balancing)
+
 
 ### Usage
 You can run each partitioning technique with following commands.
-option_refine: 0 for no refinement(HDV), 2 for ICN refinement(HDV+R), 3 for ICN refinement + balancing(HDV+R+B).
+option_adjustment: 0 for no adjustment(HDV), 2 for ICN adjustment(HDV+A), 3 for ICN adjustment + balancing(HDV+A+B).
 ```
 ~/SIGMOD25_PIMGT/HDV$ cd ..
-~/SIGMOD25_PIMGT$ ./HDV/bin/ne dataset/input_graph num_subgraphs
-~/SIGMOD25_PIMGT$ ./HDV/bin/divide dataset/input_graph num_subgraphs option_refine
-~/SIGMOD25_PIMGT$ ./METIS/bin/gpmetis dataset/input_graph
+~/SIGMOD25_PIMGT$ ./HDV/bin/hdv dataset/input_graph num_subgraphs option_refine
 ```
 
 Or, you can check the quality of all the partitioning with a command.
-However, the METIS may need to be compiled on your local PC with reference to this address;
+However, the baselines may need to be compiled on your local PC with reference to thess addresses;
 
- http://glaros.dtc.umn.edu/gkhome/metis/metis/download
-```
-~/SIGMOD25_PIMGT$ sh check_ICN.sh		// Compares METIS, NE, and Half-Division(HDV)
-~/SIGMOD25_PIMGT$ sh check_Refine.sh	// Compares HDV, HDV+R, HDV+R+B
-```
-The partitioning results will be stored in "debug.csv"
+ http://glaros.dtc.umn.edu/gkhome/metis/metis/download  (for METIS)
+ https://github.com/lcj2021/split-merge-partitioner     (for all other baselines)
 
-Since the quality of ICN refinement saturates quickly, the number of iterations is limited to 50.
+And you need to configure the path to the baselines.
+```C
+// in SIGMOD25_PIMGT/HDV/src/baseline.c line 3-4
+#define METIS_BIN "/home/jiet/local/bin/gpmetis"
+#define FSM_BIN "/home/jiet/split-merge-partitioner/build/main"
+```
+
+
+```
+~/SIGMOD25_PIMGT$ sh check_All.sh		// Compares all baselines
+```
+The partitioning results will be stored in "quality.csv" and "performance.csv"
+
+Since the quality of ICN adjustment saturates quickly, the number of iterations is limited to 50.
 However, you can get the exactely the same results by limiting the iterations to 500.
 Changing the number 50 will effect the number of iterations.
+You can change the iteration limits by changing the code below
 ```C
-// in SIGMOD25_PIMGT/HDV/src/divide.c line 17,
-if (ref > NO_REFINEMENT) prepare_Refinement(mat, target, ref, 50);
+// in SIGMOD25_PIMGT/HDV/src/adjust.c line 4
+int NUM_ADJUSTMENT = 300;
 ```
 
 ## PimGT Framework
@@ -60,22 +76,20 @@ if (ref > NO_REFINEMENT) prepare_Refinement(mat, target, ref, 50);
 The source codes of PimGT (Graph Traversal on Processing-in-Memory) are included in "PimGT/src" directory.
 We provide the Breadth-First Search Algorithm.
 
-You can generate the executable files with "PimGT/Makefile".
-Install the UPMEM SDK (https://sdk.upmem.com/) [4] and replace the "UPMEMDIR" in Makefile with its path.
+Install the UPMEM SDK (https://sdk.upmem.com/) [4] and generate the executable files with "Makefile".
 ```
-~/SIGMOD25_PIMGT$ cd PimGT
-~/SIGMOD25_PIMGT/PimGT$ make
+~/SIGMOD25_PIMGT$ make
 ```
 
 ### Usage 
 You can run the BFS algorithm with following commands.
 ```
-~/SIGMOD25_PIMGT/PIMGT$ ./bin/bfs dataset/metis/mario001.mtx 64
-~/SIGMOD25_PIMGT/PIMGT$ ./bin/bfs dataset/ne/mario001.mtx 64
-~/SIGMOD25_PIMGT/PIMGT$ ./bin/bfs dataset/hdv/mario001.mtx 64
+~/SIGMOD25_PIMGT$ ./bin/bfs dataset/metis/mario001.mtx 64
+~/SIGMOD25_PIMGT$ ./bin/bfs dataset/ne/mario001.mtx 64
+~/SIGMOD25_PIMGT$ ./bin/bfs dataset/hdv/mario001.mtx 64
 ```
-However, the PIM kernel can only be executed on real-world PIM systems; UPMEM PIM [3].
-Fortunately, the UPMEM PIM SDK [4] also provides a CPU-based simulator.
+However, the PIM kernel can only be executed on real-world PIM systems; UPMEM PIM [8].
+Fortunately, the UPMEM PIM SDK [9] also provides a CPU-based simulator.
 Therefore we adapted our code for the simulator.
 However, since the simulator can only simulate 64 PIM units, we provide "mario001", which is the smallest graph we used in our experiments that can run on 64 units.
 
@@ -158,8 +172,13 @@ However, in real-world PIM systems, HDV, which balances the workload across subg
 
 ### References
 [1] George Karypis and Vipin Kumar. 1998. A Fast and High Quality Multi-level Scheme for Partitioning Irregular Graphs. SIAM Journal on Scientific Computing 20, 1 (1998), 359–392. https://doi.org/10.1137/S1064827595287997
-[2] Chenzi Zhang, Fan Wei, Qin Liu, Zhihao Gavin Tang, and Zhenguo Li. 2017. Graph Edge Partitioning via Neighborhood Heuristic (KDD ’17). Association for Computing Machinery, New York, NY, USA, 605–614. https://doi.org/10.1145/3097983.3098033
-[3] F. Devaux. 2019. The true Processing In Memory accelerator. In 2019 IEEE Hot Chips 31 Symposium (HCS). IEEE Computer Society, Los Alamitos, CA, USA, 1–24. https://doi.org/10.1109/HOTCHIPS.2019.8875680
-[4] https://sdk.upmem.com/
+[2] Shuai Lin, Rui Wang, Yongkun Li, Yinlong Xu, John C.S. Lui, Fei Chen, Pengcheng Wang, and Lei Han. 2023. Towards Fast Large-scale Graph Analysis via Two-dimensional Balanced Partitioning. In Proceedings of the 51st International Conference on Parallel Processing (ICPP '22). Association for Computing Machinery, New York, NY, USA, Article 37, 1–11. https://doi.org/10.1145/3545008.3545060
+[3] Charalampos Tsourakakis, Christos Gkantsidis, Bozidar Radunovic, and Milan Vojnovic. 2014. FENNEL: streaming graph partitioning for massive scale graphs. In Proceedings of the 7th ACM international conference on Web search and data mining (WSDM '14). Association for Computing Machinery, New York, NY, USA, 333–342. https://doi.org/10.1145/2556195.2556213
+[4] Chenzi Zhang, Fan Wei, Qin Liu, Zhihao Gavin Tang, and Zhenguo Li. 2017. Graph Edge Partitioning via Neighborhood Heuristic (KDD ’17). Association for Computing Machinery, New York, NY, USA, 605–614. https://doi.org/10.1145/3097983.3098033
+[5] Dongsheng Li, Yiming Zhang, Jinyan Wang, and Kian-Lee Tan. 2019. TopoX: topology refactorization for efficient graph partitioning and processing. Proc. VLDB Endow. 12, 8 (April 2019), 891–905. https://doi.org/10.14778/3324301.3324306
+[6] Ruben Mayer and Hans-Arno Jacobsen. 2021. Hybrid Edge Partitioner: Partitioning Large Power-Law Graphs under Memory Constraints. In Proceedings of the 2021 International Conference on Management of Data (SIGMOD '21). Association for Computing Machinery, New York, NY, USA, 1289–1302. https://doi.org/10.1145/3448016.3457300
+[7] Chengjun Liu, Zhuo Peng, Weiguo Zheng, and Lei Zou. 2024. FSM: A Fine-Grained Splitting and Merging Framework for Dual-Balanced Graph Partition. Proc. VLDB Endow. 17, 9 (May 2024), 2378–2391. https://doi.org/10.14778/3665844.3665864
+[8] F. Devaux. 2019. The true Processing In Memory accelerator. In 2019 IEEE Hot Chips 31 Symposium (HCS). IEEE Computer Society, Los Alamitos, CA, USA, 1–24. https://doi.org/10.1109/HOTCHIPS.2019.8875680
+[9] https://sdk.upmem.com/
 
 > We will provide the full source code soon, when some confidential issues are resolved.

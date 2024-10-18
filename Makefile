@@ -1,4 +1,3 @@
-UPMEMDIR=/home/jiet/upmem-2023.2.0-Linux-x86_64
 BASEDIR=.
 SRCDIR=$(BASEDIR)/src
 BFSSRCDIR=$(BASEDIR)/src/bfs
@@ -10,8 +9,8 @@ OBJDIR=$(BASEDIR)/obj
 
 CPP=gcc
 NUMTASKLETS=-DNR_TASKLETS=11
-HOSTFLAGS=-O3 -fopenmp -w -I/home/jiet/upmem-2023.2.0-Linux-x86_64/include/dpu
-USEDPUS=-L$(UPMEMDIR)/lib -ldpu -I$(UPMEMDIR)/include/dpu
+HOSTFLAGS=-O3 -fopenmp -w 
+USEDPUS=-ldpu -I/usr/include/dpu
 #USEDPUS=`dpu-pkg-config --cflags --libs dpu` $(NUMTASKLETS)
 CLANG=dpu-upmem-dpurte-clang
 PIMFLAGS=$(NUMTASKLETS) -O3 
