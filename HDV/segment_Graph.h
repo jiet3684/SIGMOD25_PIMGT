@@ -65,11 +65,10 @@ pairInfo pop(pairInfo* pair, int* mapping, int reduced_size);
 void heapify(pairInfo* pair, int* mapping, int index);
 
 // Refinement
-void prepare_Refinement(csr mat, int target);
-void local_Refinement(csr mat, int avg, int left_SG);
-void ICN_Refinement(csr mat, int step);
+void prepare_Adjustment(csr mat, int target);
+void ICN_Adjustment(csr mat, int step);
 void ICN_Balancing(csr mat);
-void finish_Refinement();
+void finish_Adjustment();
 
 // Debuging
 int find_ICN(csr mat, int* num_ICN);
