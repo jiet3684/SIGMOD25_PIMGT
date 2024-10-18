@@ -48,21 +48,23 @@ And you need to configure the path to the baselines.
 #define FSM_BIN "/home/jiet/split-merge-partitioner/build/main"
 ```
 
-You can run each partitioning technique with following commands.
+
+You can chaek the quality of all the partitioning methods with a command below (Recommended).
+```
+~/SIGMOD25_PIMGT$ cd HDV		    
+~/SIGMOD25_PIMGT/HDV$ sh check_All.sh	// Compares all baselines
+```
+The partitioning results will be stored in "quality.csv" and "performance.csv"
+
+
+Or, you can run each partitioning technique with following commands.
 option_adjustment: 0 for no adjustment(HDV), 2 for ICN adjustment(HDV+A), 3 for ICN adjustment + balancing(HDV+A+B).
 ```
 ~/SIGMOD25_PIMGT/HDV$ cd ..
 ~/SIGMOD25_PIMGT$ ./HDV/bin/hdv dataset/input_graph num_subgraphs option_refine
 ~/SIGMOD25_PIMGT$ ./HDV/bin/metis dataset/input_graph num_subgraphs 
-...
+  ......
 ```
-
-Or, you can check the quality of all the partitioning with a command.
-
-```
-~/SIGMOD25_PIMGT$ sh check_All.sh		// Compares all baselines
-```
-The partitioning results will be stored in "quality.csv" and "performance.csv"
 
 Since the quality of ICN adjustment saturates quickly, the number of iterations is limited to 50.
 However, you can get the exactely the same results by limiting the iterations to 500.
@@ -76,7 +78,7 @@ int NUM_ADJUSTMENT = 300;
 ## PimGT Framework
 
 ### Compilation
-The source codes of PimGT (Graph Traversal on Processing-in-Memory) are included in "PimGT/src" directory.
+The source codes of PimGT (Graph Traversal on Processing-in-Memory) are included in "SIGMOD25_PIMGT/src" directory.
 We provide the Breadth-First Search Algorithm.
 
 Install the UPMEM SDK (https://sdk.upmem.com/) [4] and generate the executable files with "Makefile".
