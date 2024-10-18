@@ -1,14 +1,13 @@
 #!/bin/bash
 
 #Modify PIMGT_DIR 
-PIMGT_DIR=/home/jiet/pimgt
-HDV_DIR=$PIMGT_DIR/src/graph_partition
+PIMGT_DIR=/home/jiet/SIGMOD25_PIMGT
+HDV_DIR=$PIMGT_DIR/HDV
 DATASET_DIR=$PIMGT_DIR/dataset
 FILE_QUALITY=./quality.csv
 FILE_PERFORMANCE=./performance.csv
 
 LIST_REAL="thermomech_dM.mtx patents_main.mtx delaunay_n18.mtx com-Amazon.mtx mario002.mtx largebasis.mtx delaunay_n20.mtx com-Youtube.mtx thermal2.mtx in-2004.mtx"
-LIST_SYNTHETIC="dense1.mtx dense2.mtx dense3.mtx sparse1.mtx sparse2.mtx sparse3.mtx"
 NUM="16 64 256 1024"
 
 rm $FILE_QUALITY
