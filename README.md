@@ -31,21 +31,14 @@ We used 10 baselines for the experiments.
 - FSM [7]
 - HDV
 - HDV with ICN adjustment
-- Pimgt (HDV with ICN adjustment and ICN balancing)
+- PimGT (HDV with ICN adjustment and ICN balancing)
 
 
 ### Usage
-You can run each partitioning technique with following commands.
-option_adjustment: 0 for no adjustment(HDV), 2 for ICN adjustment(HDV+A), 3 for ICN adjustment + balancing(HDV+A+B).
-```
-~/SIGMOD25_PIMGT/HDV$ cd ..
-~/SIGMOD25_PIMGT$ ./HDV/bin/hdv dataset/input_graph num_subgraphs option_refine
-```
-
-Or, you can check the quality of all the partitioning with a command.
-However, the baselines may need to be compiled on your local PC with reference to thess addresses;
+First, the baselines may need to be compiled on your local PC with reference to thess addresses;
 
  http://glaros.dtc.umn.edu/gkhome/metis/metis/download  (for METIS)
+
  https://github.com/lcj2021/split-merge-partitioner     (for all other baselines)
 
 And you need to configure the path to the baselines.
@@ -55,6 +48,16 @@ And you need to configure the path to the baselines.
 #define FSM_BIN "/home/jiet/split-merge-partitioner/build/main"
 ```
 
+You can run each partitioning technique with following commands.
+option_adjustment: 0 for no adjustment(HDV), 2 for ICN adjustment(HDV+A), 3 for ICN adjustment + balancing(HDV+A+B).
+```
+~/SIGMOD25_PIMGT/HDV$ cd ..
+~/SIGMOD25_PIMGT$ ./HDV/bin/hdv dataset/input_graph num_subgraphs option_refine
+~/SIGMOD25_PIMGT$ ./HDV/bin/metis dataset/input_graph num_subgraphs 
+...
+```
+
+Or, you can check the quality of all the partitioning with a command.
 
 ```
 ~/SIGMOD25_PIMGT$ sh check_All.sh		// Compares all baselines
@@ -172,13 +175,20 @@ However, in real-world PIM systems, HDV, which balances the workload across subg
 
 ### References
 [1] George Karypis and Vipin Kumar. 1998. A Fast and High Quality Multi-level Scheme for Partitioning Irregular Graphs. SIAM Journal on Scientific Computing 20, 1 (1998), 359–392. https://doi.org/10.1137/S1064827595287997
+
 [2] Shuai Lin, Rui Wang, Yongkun Li, Yinlong Xu, John C.S. Lui, Fei Chen, Pengcheng Wang, and Lei Han. 2023. Towards Fast Large-scale Graph Analysis via Two-dimensional Balanced Partitioning. In Proceedings of the 51st International Conference on Parallel Processing (ICPP '22). Association for Computing Machinery, New York, NY, USA, Article 37, 1–11. https://doi.org/10.1145/3545008.3545060
+
 [3] Charalampos Tsourakakis, Christos Gkantsidis, Bozidar Radunovic, and Milan Vojnovic. 2014. FENNEL: streaming graph partitioning for massive scale graphs. In Proceedings of the 7th ACM international conference on Web search and data mining (WSDM '14). Association for Computing Machinery, New York, NY, USA, 333–342. https://doi.org/10.1145/2556195.2556213
+
 [4] Chenzi Zhang, Fan Wei, Qin Liu, Zhihao Gavin Tang, and Zhenguo Li. 2017. Graph Edge Partitioning via Neighborhood Heuristic (KDD ’17). Association for Computing Machinery, New York, NY, USA, 605–614. https://doi.org/10.1145/3097983.3098033
+
 [5] Dongsheng Li, Yiming Zhang, Jinyan Wang, and Kian-Lee Tan. 2019. TopoX: topology refactorization for efficient graph partitioning and processing. Proc. VLDB Endow. 12, 8 (April 2019), 891–905. https://doi.org/10.14778/3324301.3324306
+
 [6] Ruben Mayer and Hans-Arno Jacobsen. 2021. Hybrid Edge Partitioner: Partitioning Large Power-Law Graphs under Memory Constraints. In Proceedings of the 2021 International Conference on Management of Data (SIGMOD '21). Association for Computing Machinery, New York, NY, USA, 1289–1302. https://doi.org/10.1145/3448016.3457300
+
 [7] Chengjun Liu, Zhuo Peng, Weiguo Zheng, and Lei Zou. 2024. FSM: A Fine-Grained Splitting and Merging Framework for Dual-Balanced Graph Partition. Proc. VLDB Endow. 17, 9 (May 2024), 2378–2391. https://doi.org/10.14778/3665844.3665864
+
 [8] F. Devaux. 2019. The true Processing In Memory accelerator. In 2019 IEEE Hot Chips 31 Symposium (HCS). IEEE Computer Society, Los Alamitos, CA, USA, 1–24. https://doi.org/10.1109/HOTCHIPS.2019.8875680
+
 [9] https://sdk.upmem.com/
 
-> We will provide the full source code soon, when some confidential issues are resolved.
